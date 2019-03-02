@@ -16,4 +16,28 @@ public class Calculator {
         }
         return parseIn;
     }
+
+    public static List<String> countSimpleExpression(List<String> input, int start) {
+        List<String> output = new LinkedList<>(input);
+        Double result = 0.0;
+        switch (input.get(start + 1)) {
+            case ("*"):
+                result = Double.parseDouble(input.get(start)) * Double.parseDouble(input.get(start + 2));
+                break;
+            case ("-"):
+                result = Double.parseDouble(input.get(start)) - Double.parseDouble(input.get(start + 2));
+                break;
+            case ("+"):
+                result = Double.parseDouble(input.get(start)) + Double.parseDouble(input.get(start + 2));
+                break;
+            case ("/"):
+                result = Double.parseDouble(input.get(start)) / Double.parseDouble(input.get(start + 2));
+                break;
+        }
+        output.remove(start);
+        output.remove(start);
+        output.set(start, result.toString());
+        return output;
+    }
+
 }
