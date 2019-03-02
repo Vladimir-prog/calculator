@@ -13,7 +13,7 @@ public class Main {
         String text = InOutHelper.readString();
         List<String> input = Calculator.parseInput(text);
         InOutHelper.writeMessage(input.toString());
-        input = Calculator.countSimpleExpression(input, 0);
+        input = Calculator.countExpression(input, 0, input.size()-1);
         InOutHelper.writeMessage(input.toString());
 
 //        InOutHelper.writeMessage(Arrays.toString(Calculator.parseInput(text).toArray()));
