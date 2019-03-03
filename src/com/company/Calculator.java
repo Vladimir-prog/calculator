@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 public class Calculator {
 
     public static List<String> parseInput(String input) {
-        List<String> parseIn = new LinkedList<>();
+        List<String> parseIn = new LinkedList<String>();
         Pattern pattern = Pattern.compile("[0-9]+|[\\(\\)\\-\\+\\*/]");
         Matcher matcher = pattern.matcher(input);
         while (matcher.find()) {
@@ -21,8 +21,19 @@ public class Calculator {
         return parseIn;
     }
 
+//    public static List<String> parseInput(String input) {
+//        char[] parseIn = input.toCharArray();
+//        List<String> output = new LinkedList<>();
+//        int start = 0;
+//        int stop = 0;
+//        for (int i = 0; i < parseIn.length; i++) {
+//            if (isMinus(parseIn[i]))
+//        }
+//        return output;
+//    }
+
     public static List<String> converMinus(List<String> input) {
-        List<String> output = new LinkedList<>(input);
+        List<String> output = new LinkedList<String>(input);
         ListIterator listIterator = output.listIterator(input.size() - 1);
 
         return output;
@@ -51,7 +62,7 @@ public class Calculator {
         String nextElement = "";
         while (listIterator.hasNext()) {
             nextElement = listIterator.next().toString();
-            if (thisElement.equals(nextElement)&&!isMinus(thisElement)) {
+            if (thisElement.equals(nextElement)&&!isMinus(thisElement.charAt(0))) {
                 return true;
             }
             thisElement = nextElement;
@@ -64,7 +75,7 @@ public class Calculator {
     }
 
     public static String countExpression(List<String> input, int start, int finish) {
-        List<String> helper = new ArrayList<>(input);
+        List<String> helper = new ArrayList<String>(input);
         String result = "";
         rightBracket:
         for (int i = finish; i > start; i--) {
@@ -95,8 +106,8 @@ public class Calculator {
         return result;
     }
 
-    public static boolean isMinus(String symbol) {
-        if (symbol.equals("-")) {
+    public static boolean isMinus(Character symbol) {
+        if (symbol == '-') {
             return true;
         } else return false;
     }
@@ -122,7 +133,7 @@ public class Calculator {
 
     public static List<String> removeFromTo(List<String> input, int from, int to) {
         //if (input.size() >= to) {
-        List<String> output = new LinkedList<>(input);
+        List<String> output = new LinkedList<String>(input);
         ListIterator listIterator = output.listIterator(from);
         for (int i = from; i <= to; i++) {
             listIterator.next();
@@ -135,7 +146,7 @@ public class Calculator {
     public static List<String> copyFromTo(List<String> input, int from, int to) {
         //if (input.size() >= to) {
         ListIterator listIterator = input.listIterator(from);
-        List<String> output = new LinkedList<>();
+        List<String> output = new LinkedList<String>();
         for (int i = from; i <= to; i++) {
             output.add(listIterator.next().toString());
         }
@@ -146,7 +157,7 @@ public class Calculator {
     }
 
     public static String countExpressionWithoutBrackets(List<String> input) {
-        List<String> helper = new ArrayList<>(input);
+        List<String> helper = new ArrayList<String>(input);
         String result = "";
 //        int elemIndex = 0;
 //        int highPriorityAmount = howManyHighPriority(input);
@@ -163,7 +174,7 @@ public class Calculator {
                 step = step + 2;
             }
         }
-        helper = new ArrayList<>(input);
+        helper = new ArrayList<String>(input);
         step = 1;
         //          highPriorityAmount--;
         //       }
@@ -212,21 +223,17 @@ public class Calculator {
     }
 
     public static String countSimpleExpression(List<String> input, int start) {
-        List<String> output = new LinkedList<>(input);
+        List<String> output = new LinkedList<String>(input);
         Double result = 0.0;
-        switch (input.get(start + 1)) {
-            case ("*"):
-                result = Double.parseDouble(input.get(start)) * Double.parseDouble(input.get(start + 2));
-                break;
-            case ("-"):
-                result = Double.parseDouble(input.get(start)) - Double.parseDouble(input.get(start + 2));
-                break;
-            case ("+"):
-                result = Double.parseDouble(input.get(start)) + Double.parseDouble(input.get(start + 2));
-                break;
-            case ("/"):
-                result = Double.parseDouble(input.get(start)) / Double.parseDouble(input.get(start + 2));
-                break;
+        String elem = input.get(start + 1);
+        if (elem.equals("*")) {
+            result = Double.parseDouble(input.get(start)) * Double.parseDouble(input.get(start + 2));
+        } else if (elem.equals("-")) {
+            result = Double.parseDouble(input.get(start)) - Double.parseDouble(input.get(start + 2));
+        } else if (elem.equals("+")) {
+            result = Double.parseDouble(input.get(start)) + Double.parseDouble(input.get(start + 2));
+        } else if (elem.equals("/")) {
+            result = Double.parseDouble(input.get(start)) / Double.parseDouble(input.get(start + 2));
         }
 //        output.remove(start);
 //        output.remove(start);
