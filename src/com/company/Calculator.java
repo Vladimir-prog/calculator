@@ -1,5 +1,7 @@
 package com.company;
 
+import com.company.Exeptions.DoubleSymbolException;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,11 +21,49 @@ public class Calculator {
         return parseIn;
     }
 
+    public static List<String> converMinus(List<String> input) {
+        List<String> output = new LinkedList<>(input);
+        ListIterator listIterator = output.listIterator(input.size() - 1);
+
+        return output;
+    }
+
+//    public static boolean hasDoubleSymbol(List<String> input) {
+//        ListIterator listIterator = input.listIterator();
+//        String thisElement = listIterator.toString();
+//        boolean thisIsSymbol = isSymbol(thisElement);
+//        String nextElement = "";
+//        boolean nextIsSymbol = false;
+//        while (listIterator.hasNext()) {
+//            nextElement = listIterator.next().toString();
+//            nextIsSymbol = isSymbol(nextElement);
+//            if (thisElement.equals(nextElement)&&!isMinus(thisElement)) {
+//
+//            }
+//            thisElement = nextElement;
+//            thisIsSymbol = nextIsSymbol;
+//        }
+//    }
+
+    public static boolean hasUnarMinus(List<String> input) {
+        ListIterator listIterator = input.listIterator();
+        String thisElement = listIterator.toString();
+        String nextElement = "";
+        while (listIterator.hasNext()) {
+            nextElement = listIterator.next().toString();
+            if (thisElement.equals(nextElement)&&!isMinus(thisElement)) {
+                return true;
+            }
+            thisElement = nextElement;
+        }
+        return false;
+    }
+
     public static Double countExpression(List<String> input) {
         return Double.parseDouble(countExpression(input, 0, input.size() - 1));
     }
 
-    private static String countExpression(List<String> input, int start, int finish) {
+    public static String countExpression(List<String> input, int start, int finish) {
         List<String> helper = new ArrayList<>(input);
         String result = "";
         rightBracket:
@@ -36,17 +76,16 @@ public class Calculator {
                     } else if (helper.get(j).equals("(") && temp != 0) {
                         temp--;
                     } else if (helper.get(j).equals("(")) {
-//                        brackets--;
                         if (i == j + 2) {
                             result = helper.get(j + 1);
                             input = removeFromTo(input, j, i);
                             input.add(j, result);
-                            i-=2;
+                            i -= 2;
                         } else {
                             result = countExpression(copyFromTo(input, j + 1, i - 1)).toString();
                             input = removeFromTo(input, j, i);
                             input.add(j, result);
-                            i-=i-j;
+                            i -= i - j;
                         }
                     }
                 }
@@ -56,26 +95,51 @@ public class Calculator {
         return result;
     }
 
+    public static boolean isMinus(String symbol) {
+        if (symbol.equals("-")) {
+            return true;
+        } else return false;
+    }
+
+    public static boolean isLeftBracket(String symbol) {
+        if (symbol.equals("(")) {
+            return true;
+        } else return false;
+    }
+
+    public static boolean isRightBracket(String symbol) {
+        if (symbol.equals(")")) {
+            return true;
+        } else return false;
+    }
+
+
+    public static boolean isSymbol(String symbol) {
+        if (symbol.equals("+") || symbol.equals("-") || symbol.equals("/") || symbol.equals("*") || symbol.equals("(") || symbol.equals(")")) {
+            return true;
+        } else return false;
+    }
+
     public static List<String> removeFromTo(List<String> input, int from, int to) {
         //if (input.size() >= to) {
-            List<String> output = new LinkedList<>(input);
-            ListIterator listIterator = output.listIterator(from);
-            for (int i = from; i <= to; i++) {
-                listIterator.next();
-                listIterator.remove();
-            }
-            return output;
+        List<String> output = new LinkedList<>(input);
+        ListIterator listIterator = output.listIterator(from);
+        for (int i = from; i <= to; i++) {
+            listIterator.next();
+            listIterator.remove();
+        }
+        return output;
 //        } else return input;
     }
 
     public static List<String> copyFromTo(List<String> input, int from, int to) {
         //if (input.size() >= to) {
-            ListIterator listIterator = input.listIterator(from);
-            List<String> output = new LinkedList<>();
-            for (int i = from; i <= to; i++) {
-                output.add(listIterator.next().toString());
-            }
-            return output;
+        ListIterator listIterator = input.listIterator(from);
+        List<String> output = new LinkedList<>();
+        for (int i = from; i <= to; i++) {
+            output.add(listIterator.next().toString());
+        }
+        return output;
 //        } else {
 //            return input;
 //        }
