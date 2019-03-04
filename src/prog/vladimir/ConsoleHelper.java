@@ -1,4 +1,4 @@
-package com.company;
+package prog.vladimir;
 
 import java.io.BufferedReader;
 import java.io.IOException;

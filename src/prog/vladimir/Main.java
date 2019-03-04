@@ -1,7 +1,4 @@
-package com.company;
-
-import java.io.IOException;
-import java.util.List;
+package prog.vladimir;
 
 public class Main {
 

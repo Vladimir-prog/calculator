@@ -1,4 +1,4 @@
-package com.company;
+package prog.vladimir;
 
 
 public class MyCalculatorExceptinon extends Exception {

@@ -1,4 +1,4 @@
-package com.company;
+package prog.vladimir;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
