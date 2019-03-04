@@ -9,45 +9,42 @@ public class SwingInterface extends JFrame {
     private JButton button = new JButton("Посчитать");
     private JTextField input = new JTextField("", 5);
     private JLabel label = new JLabel("Введи выражение:");
-    private JLabel answer = new JLabel("answer");
-    private JLabel clearLable = new JLabel("");
+    private JLabel answer = new JLabel("");
+    private JLabel errorLable = new JLabel("");
 
     public SwingInterface() {
-        super("Simple Example");
-        this.setBounds(200,200,500,100);
+        super("MyCalculator");
+        this.setBounds(200,200,500,150);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        Container container = this.getContentPane();
-        container.setLayout(new GridLayout(0,3,10,10));
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new GridLayout(0, 3, 15, 15));
         label.setHorizontalAlignment(SwingConstants.RIGHT);
-        container.add(label);
-        container.add(input);
-        container.add(answer);
-        container.add(clearLable);
+        mainPanel.add(label);
+        input.addActionListener(new ButtonEventListener());
+        mainPanel.add(input);
+        mainPanel.add(answer);
+
+        Container outerContainer = this.getContentPane();
+        outerContainer.setLayout(new GridLayout(3,0,10,10));
+        errorLable.setHorizontalAlignment(SwingConstants.CENTER);
+        outerContainer.add(errorLable);
+        outerContainer.add(mainPanel);
         button.addActionListener(new ButtonEventListener());
-        container.add(button);
-
+        outerContainer.add(button);
     }
-
     class ButtonEventListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             try {
                 String answerString = Calculator.countExpression(Calculator.parseInput(input.getText())).toString();
                 answer.setText(answerString);
             } catch (MyCalculatorExceptinon exeption) {
-                answer.setText(exeption.getMessage());
-                //clearLable.setText(exept.getMessage());
+                errorLable.setText(exeption.getMessage());
             } catch (Exception exeption) {
                 answer.setText("ERROR");
+                errorLable.setText("неизвестная ошибка =(");
                 //clearLable.setText(exept.getMessage());
             }
         }
     }
-
-
-//    public static void main(String[] args)
-//    {
-//        SwingInterface w = new SwingInterface();
-//        w.setVisible(true);
-//    }
 }
