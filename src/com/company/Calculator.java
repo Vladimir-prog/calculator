@@ -1,80 +1,16 @@
 package com.company;
 
-import com.company.Exeptions.DoubleSymbolException;
-
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Calculator {
 
-    public static List<String> parseInput(String input) {
-        List<String> parseIn = new LinkedList<String>();
-        Pattern pattern = Pattern.compile("[0-9]+|[\\(\\)\\-\\+\\*/]");
-        Matcher matcher = pattern.matcher(input);
-        while (matcher.find()) {
-            parseIn.add(input.substring(matcher.start(), matcher.end()));
-        }
-        return parseIn;
-    }
-
-//    public static List<String> parseInput(String input) {
-//        char[] parseIn = input.toCharArray();
-//        List<String> output = new LinkedList<>();
-//        int start = 0;
-//        int stop = 0;
-//        for (int i = 0; i < parseIn.length; i++) {
-//            if (isMinus(parseIn[i]))
-//        }
-//        return output;
-//    }
-
-    public static List<String> converMinus(List<String> input) {
-        List<String> output = new LinkedList<String>(input);
-        ListIterator listIterator = output.listIterator(input.size() - 1);
-
-        return output;
-    }
-
-//    public static boolean hasDoubleSymbol(List<String> input) {
-//        ListIterator listIterator = input.listIterator();
-//        String thisElement = listIterator.toString();
-//        boolean thisIsSymbol = isSymbol(thisElement);
-//        String nextElement = "";
-//        boolean nextIsSymbol = false;
-//        while (listIterator.hasNext()) {
-//            nextElement = listIterator.next().toString();
-//            nextIsSymbol = isSymbol(nextElement);
-//            if (thisElement.equals(nextElement)&&!isMinus(thisElement)) {
-//
-//            }
-//            thisElement = nextElement;
-//            thisIsSymbol = nextIsSymbol;
-//        }
-//    }
-
-    public static boolean hasUnarMinus(List<String> input) {
-        ListIterator listIterator = input.listIterator();
-        String thisElement = listIterator.toString();
-        String nextElement = "";
-        while (listIterator.hasNext()) {
-            nextElement = listIterator.next().toString();
-            if (thisElement.equals(nextElement)&&!isMinus(thisElement.charAt(0))) {
-                return true;
-            }
-            thisElement = nextElement;
-        }
-        return false;
-    }
-
     public static Double countExpression(List<String> input) {
         return Double.parseDouble(countExpression(input, 0, input.size() - 1));
     }
-
-    public static String countExpression(List<String> input, int start, int finish) {
+	
+	public static String countExpression(List<String> input, int start, int finish) {
         List<String> helper = new ArrayList<String>(input);
         String result = "";
         rightBracket:
@@ -105,32 +41,148 @@ public class Calculator {
         result = countExpressionWithoutBrackets(input);
         return result;
     }
+	
 
-    public static boolean isMinus(Character symbol) {
-        if (symbol == '-') {
+	
+	public static List<String> parseInput(String input) throws Exception {
+        List<String> parseIn = new LinkedList<String>();
+		input = input.replaceAll("\\s+","");
+		input = input.replaceAll(",",".");
+        Pattern pattern = Pattern.compile("[0-9\\.]+|[\\(\\)\\-\\+\\*/]");
+        Matcher matcher = pattern.matcher(input);
+        while (matcher.find()) {
+            parseIn.add(input.substring(matcher.start(), matcher.end()));
+        }
+		if (!checkBrackets(parseIn)) throw new MyCalculatorExceptinon("неверно расставлены скобки");
+		if (input.length() != totalLengthOfListItems(parseIn)) throw new MyCalculatorExceptinon("присутствуют некорректные символы");
+		parseIn = convertUnaryMinus(parseIn);
+        return parseIn;
+    }
+	
+	public static int totalLengthOfListItems(List<String> input) {
+		int result = 0;
+		for (String s: input) {
+			result += s.length();
+		}
+		return result;
+	}
+	
+	public static boolean checkBrackets(List<String> input) {
+		Stack<String> stack = new Stack<String>();
+        for (String s : input) {
+            if (isRightBracket(s) && stack.isEmpty()) {
+                return false;
+            }
+            if (isLeftBracket(s)) {
+                stack.push(s);
+            }
+            if (isRightBracket(s)) {
+                if (isPair(stack.peek(), s)) {
+                    stack.pop();
+                }
+            }
+        }
+        return stack.isEmpty();
+    }
+	
+	public static List<String> convertUnaryMinus(List<String> input) throws Exception {
+		List<String> helper = new ArrayList<String>(input);
+		List<String> output = new LinkedList<String>();
+		
+		for (int i = 0; i < helper.size(); i++) {
+			if (isDivision(helper.get(i)) && isMinus(helper.get(i+1)) && isLeftBracket(helper.get(i+2))) {  // num / - (
+				output.add("*");
+				output.add("-1");
+				output.add("/");
+				i++;
+			} else if (isLeftBracket(helper.get(i)) && i>0 && !isOperation(helper.get(i-1))) {
+				throw new MyCalculatorExceptinon("нет операции перед скобкой");
+			} else if (isMinus(helper.get(i))) {
+				if (i==0) {
+					if (isNumber(helper.get(i+1))) {
+						output.add(helper.get(i)+helper.get(i+1));
+						i++;
+//						System.out.println("1");
+					} else if (isLeftBracket(helper.get(i+1))) {
+						output.add("-1");
+						output.add("*");
+//						System.out.println("2");
+					} else throw new MyCalculatorExceptinon("два символа подряд");
+				} else if (isSymbol(helper.get(i-1))) {
+					if (isRightBracket(helper.get(i-1))) {
+						output.add(helper.get(i));
+//						System.out.println("3");
+					} else if (isLeftBracket(helper.get(i+1))) {
+						output.add("-1");
+						output.add("*");
+//						System.out.println("4");
+					} else if (isLeftBracket(helper.get(i-1))) {
+						if (isNumber(helper.get(i+1))) {
+							output.add(helper.get(i)+helper.get(i+1));
+							i++;
+//							System.out.println("5");
+						} else throw new MyCalculatorExceptinon("два символа подряд после скобки");
+					} else if (isNumber(helper.get(i+1))) {
+						output.add(helper.get(i)+helper.get(i+1));
+						i++;
+//						System.out.println("6");
+					} else if (isLeftBracket(helper.get(i-1))) {
+						if (isNumber(helper.get(i+1))) {
+							output.add(helper.get(i)+helper.get(i+1));
+							i++;
+//							System.out.println("7");
+						} else throw new MyCalculatorExceptinon("два символа подряд после скобки");
+					} else throw new MyCalculatorExceptinon("три символа подряд");
+				} else output.add(helper.get(i));
+			} else output.add(helper.get(i));
+		}
+		return output;
+	}
+	
+	public static boolean isNumber(String element) {
+        try {
+			Double.parseDouble(element);
+            return true;
+        } catch (Exception e) {
+			return false;
+		}
+	}
+	public static boolean isMinus(String symbol) {
+        if (symbol.equals("-")) {
             return true;
         } else return false;
     }
-
+	public static boolean isDivision(String symbol) {
+        if (symbol.equals("/")) {
+            return true;
+        } else return false;
+    }
     public static boolean isLeftBracket(String symbol) {
         if (symbol.equals("(")) {
             return true;
         } else return false;
     }
-
     public static boolean isRightBracket(String symbol) {
         if (symbol.equals(")")) {
             return true;
         } else return false;
     }
-
-
+	public static boolean isPair(String left, String right) {
+        return left.equals("(") && right.equals(")");
+    }
     public static boolean isSymbol(String symbol) {
         if (symbol.equals("+") || symbol.equals("-") || symbol.equals("/") || symbol.equals("*") || symbol.equals("(") || symbol.equals(")")) {
             return true;
         } else return false;
     }
-
+	
+	public static boolean isOperation(String symbol) {
+        if (symbol.equals("+") || symbol.equals("-") || symbol.equals("/") || symbol.equals("*") || symbol.equals("(") || symbol.equals(")")) {
+            return true;
+        } else return false;
+    }
+	
+	
     public static List<String> removeFromTo(List<String> input, int from, int to) {
         //if (input.size() >= to) {
         List<String> output = new LinkedList<String>(input);
@@ -212,33 +264,38 @@ public class Calculator {
         return lowPriorityAmount;
     }
 
-    public static int howManyBrackets(List<String> input) {
-        int bracketsAmount = 0;
-        for (String elem : input) {
-            if (elem.equals("(")) {
-                bracketsAmount++;
-            }
-        }
-        return bracketsAmount;
-    }
-
     public static String countSimpleExpression(List<String> input, int start) {
         List<String> output = new LinkedList<String>(input);
         Double result = 0.0;
-        String elem = input.get(start + 1);
-        if (elem.equals("*")) {
+//        switch (input.get(start + 1)) {
+//            case ("*"):
+//                result = Double.parseDouble(input.get(start)) * Double.parseDouble(input.get(start + 2));
+//                break;
+//            case ("-"):
+//                result = Double.parseDouble(input.get(start)) - Double.parseDouble(input.get(start + 2));
+//                break;
+//            case ("+"):
+//                result = Double.parseDouble(input.get(start)) + Double.parseDouble(input.get(start + 2));
+//                break;
+//            case ("/"):
+//                result = Double.parseDouble(input.get(start)) / Double.parseDouble(input.get(start + 2));
+//                break;
+//        }
+
+        if (input.get(start + 1).equals("*")) {
             result = Double.parseDouble(input.get(start)) * Double.parseDouble(input.get(start + 2));
-        } else if (elem.equals("-")) {
-            result = Double.parseDouble(input.get(start)) - Double.parseDouble(input.get(start + 2));
-        } else if (elem.equals("+")) {
-            result = Double.parseDouble(input.get(start)) + Double.parseDouble(input.get(start + 2));
-        } else if (elem.equals("/")) {
+        } else if (input.get(start + 1).equals("/")) {
             result = Double.parseDouble(input.get(start)) / Double.parseDouble(input.get(start + 2));
+        } else if (input.get(start + 1).equals("-")) {
+            result = Double.parseDouble(input.get(start)) - Double.parseDouble(input.get(start + 2));
+        } else if (input.get(start + 1).equals("+")) {
+            result = Double.parseDouble(input.get(start)) + Double.parseDouble(input.get(start + 2));
         }
 //        output.remove(start);
 //        output.remove(start);
 //        output.set(start, result.toString());
         return result.toString();
     }
+
 
 }

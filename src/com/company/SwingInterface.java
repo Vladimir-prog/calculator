@@ -34,7 +34,10 @@ public class SwingInterface extends JFrame {
             try {
                 String answerString = Calculator.countExpression(Calculator.parseInput(input.getText())).toString();
                 answer.setText(answerString);
-            } catch (Exception exept) {
+            } catch (MyCalculatorExceptinon exeption) {
+                answer.setText(exeption.getMessage());
+                //clearLable.setText(exept.getMessage());
+            } catch (Exception exeption) {
                 answer.setText("ERROR");
                 //clearLable.setText(exept.getMessage());
             }
