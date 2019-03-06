@@ -36,6 +36,8 @@ public class SwingInterface extends JFrame {
     class ButtonEventListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             try {
+                answer.setText("");
+                errorLable.setText("");
                 String answerString = OpnCalculator.countExpression(StringParser.parseInput(input.getText())).toString();
                 answer.setText(answerString);
             } catch (MyCalculatorExceptinon exeption) {
@@ -43,7 +45,6 @@ public class SwingInterface extends JFrame {
             } catch (Exception exeption) {
                 answer.setText("ERROR");
                 errorLable.setText("неизвестная ошибка =(");
-                //clearLable.setText(exept.getMessage());
             }
         }
     }
