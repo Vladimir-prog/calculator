@@ -2,7 +2,7 @@ package prog.vladimir;
 
 import java.util.*;
 
-public class Calculator {
+public class MyCalculator {
 
     public static Double countExpression(List<String> input) {
         return Double.parseDouble(countExpression(input, 0, input.size() - 1));

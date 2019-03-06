@@ -36,7 +36,7 @@ public class SwingInterface extends JFrame {
     class ButtonEventListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             try {
-                String answerString = Calculator.countExpression(StringParser.parseInput(input.getText())).toString();
+                String answerString = OpnCalculator.countExpression(StringParser.parseInput(input.getText())).toString();
                 answer.setText(answerString);
             } catch (MyCalculatorExceptinon exeption) {
                 errorLable.setText(exeption.getMessage());
