@@ -6,7 +6,6 @@ public class OpnCalculator {
     public static Double countExpression(List<String> expression) {
 
         Queue<String> opnExpression = convertExpression(expression);
-
         return countExpression(opnExpression);
     }
 
@@ -44,7 +43,7 @@ public class OpnCalculator {
                 } else if (CheckSymbol.getPriority(elem) > CheckSymbol.getPriority(operationStack.peek())) {
                     operationStack.add(elem);
                 } else {
-                    while (!operationStack.isEmpty() && !operationStack.peek().equals("(")) {
+                    if (!operationStack.isEmpty() && !operationStack.peek().equals("(")) {
                         outputQueue.add(operationStack.pop());
                     }
                     operationStack.add(elem);
